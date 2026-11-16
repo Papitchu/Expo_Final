@@ -1,0 +1,10 @@
+{
+  "name": "seatsense",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "seed": "node src/server/seed.js",
+    "start": "node --env-file=.env src/server/index.js",
+    "dev": "node --watch --env-file=.env src/server/index.js"
+  }
+}

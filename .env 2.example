@@ -1,0 +1,14 @@
+# Copy to .env (never commit .env)
+
+# Hosted Postgres (Neon / Supabase / Vercel Postgres):
+DATABASE_URL=postgres://user:password@host:5432/dbname?sslmode=require
+# …or the local PGlite database from `npm run db:local` (then also set PG_POOL_MAX=1):
+# DATABASE_URL=postgres://postgres@127.0.0.1:5433/postgres
+# PG_POOL_MAX=1
+
+# Generate with: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+SESSION_SECRET=
+
+# Optional
+# PORT=3000
+# INVITE_TTL_MINUTES=15

@@ -1,4 +1,4 @@
-import { spaceTypes, spaces } from '../data/spaces.js';
+import { spaceTypes } from '../data/spaces.js';
 import { button, escapeHtml } from '../ui/markup.js';
 
 export function renderHome(state) {
@@ -10,7 +10,7 @@ export function renderHome(state) {
 }
 
 export function renderSpaceList(state) {
-  const results = spaces
+  const results = [...(state.spaces || [])]
     .filter((space) => (!state.type || space.type === state.type)
       && (!state.query || `${space.name} ${space.building} ${space.facilities.join(' ')}`.toLowerCase().includes(state.query.toLowerCase())))
     .sort((a, b) => a.distance - b.distance);

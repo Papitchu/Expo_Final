@@ -111,3 +111,5 @@ a { color: inherit; }
   .provider-button { font-size: 10px; }
   .login-card { padding: 27px 18px; }
 }
+
+.notice { margin: 0 0 16px; padding: 12px 14px; border: 1px solid #f1c5bd; border-radius: 10px; background: #fff4f2; color: #8a2c1f; font-size: 14px; line-height: 1.6; }

@@ -1,10 +1,12 @@
 import { button, escapeHtml } from '../ui/markup.js';
 
 export function renderSchedule(state) {
+  const seats = (state.space?.seats || []).map((seat) => `<option value="${seat.id}">${escapeHtml(seat.label)}</option>`).join('');
+  const today = new Date().toLocaleDateString('en-CA');
   return `<h1>เลือกวัน เวลา และที่นั่ง / ห้อง</h1><form data-form="schedule">
-    <label>วันที่ <input type="date" name="date" required value="${escapeHtml(state.date)}" /></label>
+    <label>วันที่ <input type="date" name="date" required min="${today}" value="${escapeHtml(state.date)}" /></label>
     <label>ช่วงเวลา <select name="time" required><option value="">เลือกช่วงเวลา</option><option>09:00–10:00</option><option>10:00–11:00</option><option>13:00–14:00</option><option>14:00–15:00</option></select></label>
-    <label>ที่นั่งหรือห้อง <select name="seat" required><option value="">เลือกที่นั่ง / ห้อง</option><option>ที่นั่ง A01</option><option>ที่นั่ง A02</option><option>ห้อง 1</option></select></label>
+    <label>ที่นั่งหรือห้อง <select name="seat" required><option value="">เลือกที่นั่ง / ห้อง</option>${seats}</select></label>
     <button>ตรวจสอบช่วงเวลาว่าง</button></form>`;
 }
 

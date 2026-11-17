@@ -2,9 +2,17 @@
   "name": "seatsense",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
-    "seed": "node src/server/seed.js",
-    "start": "node --env-file=.env src/server/index.js",
-    "dev": "node --watch --env-file=.env src/server/index.js"
+    "dev": "node --watch --env-file=.env src/index.js",
+    "start": "node --env-file=.env src/index.js",
+    "db:setup": "node --env-file=.env scripts/setup-db.js"
+  },
+  "dependencies": {
+    "cookie-session": "^2.1.1",
+    "express": "^5.3.0",
+    "pg": "^8.23.1"
   }
 }

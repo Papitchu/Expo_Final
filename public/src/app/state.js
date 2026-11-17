@@ -7,11 +7,14 @@ export function createInitialState() {
     date: '',
     time: '',
     seat: '',
+    seatId: null,
     attendees: '',
     space: null,
+    spaces: [],
     bookings: [],
     booking: null,
     loginMessage: '',
     userEmail: '',
+    error: '',
   };
 }

@@ -1,7 +1,8 @@
-import { spaces } from '../data/spaces.js';
 import { flow } from '../data/flow.js';
+import { api } from '../api.js';
+import { refreshSpaces, loadBookings, toViewBooking } from './data.js';
 
-export function handleAction(action, state, navigate, render) {
+export async function handleAction(action, state, navigate, render) {
   if (action === 'onboarding-next') {
     state.onboardingIndex += 1;
     if (state.onboardingIndex >= flow.onboarding.length) return navigate('login');
@@ -10,6 +11,7 @@ export function handleAction(action, state, navigate, render) {
 
   if (action === 'all-spaces') {
     state.type = '';
+    await refreshSpaces(state);
     return navigate('space-list');
   }
 
@@ -21,11 +23,13 @@ export function handleAction(action, state, navigate, render) {
 
   if (action.startsWith('type:')) {
     state.type = action.slice(5);
+    await refreshSpaces(state);
     return navigate('space-list');
   }
 
   if (action.startsWith('space:')) {
-    state.space = spaces.find((space) => space.id === action.slice(6)) || null;
+    // Space detail from the database, including its seats.
+    state.space = await api(`/spaces/${encodeURIComponent(action.slice(6))}`);
     return navigate('space-detail');
   }
 
@@ -35,18 +39,29 @@ export function handleAction(action, state, navigate, render) {
   }
 
   if (['checkin', 'extend', 'cancel'].includes(action)) {
-    updateBooking(action, state);
+    await updateBooking(action, state);
     return render();
+  }
+
+  if (action === 'my-bookings') {
+    await loadBookings(state);
+    return navigate('my-bookings');
+  }
+
+  if (action === 'schedule' && state.screen === 'booking-detail' && state.booking) {
+    // "Change" button on a booking: make sure the space (and its seats) is loaded.
+    state.space = await api(`/spaces/${encodeURIComponent(state.booking.space.id)}`);
   }
 
   navigate(action);
 }
 
-export function handleFormSubmit(form, state, navigate) {
+export async function handleFormSubmit(form, state, navigate, render) {
   const data = new FormData(form);
 
   switch (form.dataset.form) {
     case 'login':
+      // Still local only: real sign-in comes in the auth step.
       state.userEmail = data.get('email')?.trim() || '';
       state.loginMessage = '';
       navigate('home');
@@ -54,43 +69,62 @@ export function handleFormSubmit(form, state, navigate) {
     case 'search':
       state.query = data.get('query')?.trim() || '';
       state.type = '';
+      await refreshSpaces(state);
       navigate('search');
       break;
     case 'schedule':
-      state.date = data.get('date') || '';
-      state.time = data.get('time') || '';
-      state.seat = data.get('seat') || '';
-      navigate(state.space?.available === false ? 'alternatives' : 'booking-review');
+      await checkAvailability(data, state, navigate, render);
       break;
     case 'attendees':
-      createBooking(data, state);
-      navigate('booking-confirmed');
+      await createBooking(data, state, navigate);
       break;
     default:
       break;
   }
 }
 
-function updateBooking(action, state) {
-  if (!state.booking) return;
-  if (action === 'cancel') state.booking.status = 'ยกเลิกแล้ว';
-  state.booking.message = {
-    checkin: 'เช็กอินแล้ว (ตัวอย่าง)',
-    extend: 'ส่งคำขอขยายเวลาแล้ว (ตัวอย่าง)',
-    cancel: 'ยกเลิกรายการแล้ว',
-  }[action];
+async function checkAvailability(data, state, navigate, render) {
+  state.date = data.get('date') || '';
+  state.time = data.get('time') || '';
+  const seat = state.space?.seats?.find((item) => item.id === Number(data.get('seat')));
+  if (!seat) {
+    state.error = 'กรุณาเลือกที่นั่งหรือห้อง';
+    return render();
+  }
+  state.seatId = seat.id;
+  state.seat = seat.label;
+
+  const query = `date=${encodeURIComponent(state.date)}&slot=${encodeURIComponent(state.time)}`;
+  const freeSeats = await api(`/spaces/${encodeURIComponent(state.space.id)}/availability?${query}`);
+  return navigate(freeSeats.some((item) => item.id === seat.id) ? 'booking-review' : 'alternatives');
 }
 
-function createBooking(data, state) {
+async function createBooking(data, state, navigate) {
   state.attendees = data.get('attendees')?.trim() || '';
-  state.booking = {
-    id: `BK-${Date.now().toString().slice(-6)}`,
-    space: state.space,
-    date: state.date,
-    time: state.time,
-    seat: state.seat,
-    attendees: state.attendees,
-    status: 'ยืนยันแล้ว',
-  };
-  state.bookings.unshift(state.booking);
+  try {
+    const row = await api('/bookings', {
+      method: 'POST',
+      body: { seatId: state.seatId, date: state.date, slot: state.time, attendees: state.attendees },
+    });
+    state.booking = toViewBooking(row);
+    state.bookings.unshift(state.booking);
+    navigate('booking-confirmed');
+  } catch (error) {
+    // Someone else took the seat between "check" and "confirm".
+    if (error.status === 409) return navigate('alternatives');
+    throw error;
+  }
+}
+
+async function updateBooking(action, state) {
+  if (!state.booking) return;
+  if (action === 'extend') {
+    // Not stored yet: extending needs booking rules first.
+    state.booking.message = 'ส่งคำขอขยายเวลาแล้ว (ตัวอย่าง)';
+    return;
+  }
+  const row = await api(`/bookings/${state.booking.dbId}/${action}`, { method: 'POST' });
+  Object.assign(state.booking, toViewBooking(row), {
+    message: action === 'checkin' ? 'เช็กอินแล้ว' : 'ยกเลิกรายการแล้ว',
+  });
 }

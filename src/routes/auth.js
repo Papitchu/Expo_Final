@@ -1,5 +1,5 @@
 import { Router } from "express";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { db } from "../db.js";
 import { requireLogin } from "../middleware.js";
 
@@ -31,12 +31,18 @@ authRouter.post("/login", async (req, res) => {
   res.json({ email: user.email });
 });
 
+// CHANGED: cookie-session has no .destroy(); setting the session to null clears the cookie
 authRouter.post("/logout", (req, res) => {
   req.session = null;
   res.json({ ok: true });
 });
 
+// CHANGED: handle a cookie whose user no longer exists
 authRouter.get("/me", requireLogin, (req, res) => {
   const user = db.prepare("SELECT email FROM users WHERE id = ?").get(req.session.userId);
+  if (!user) {
+    req.session = null;
+    return res.status(401).json({ error: "Please log in" });
+  }
   res.json(user);
 });

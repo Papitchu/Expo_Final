@@ -4,10 +4,12 @@ import { renderHome, renderSpaceList, renderSpaceDetail } from '../pages/spaces.
 import { renderSchedule, renderAlternatives, renderBookingReview, renderBookingConfirmed } from '../pages/booking.js';
 import { renderMyBookings, renderBookingDetail } from '../pages/myBookings.js';
 import { renderFrame } from '../ui/layout.js';
+import { escapeHtml } from '../ui/markup.js';
 
 export function renderScreen(screen, state) {
+  const banner = state.error ? `<p class="notice" role="alert">${escapeHtml(state.error)}</p>` : '';
   const content = getScreenContent(screen, state);
-  return renderFrame(screen, content);
+  return renderFrame(screen, banner + content);
 }
 
 function getScreenContent(screen, state) {

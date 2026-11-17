@@ -1,0 +1,222 @@
+/* Booking form, slots, seats, QR invite, booking status */
+
+.booking-form {
+  margin-top: 20px;
+}
+
+.slot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.content button.slot {
+  display: grid;
+  min-height: 58px;
+  margin: 0;
+  padding: 8px;
+  border: 1px solid #dfe6dc;
+  color: #29483b;
+  background: #fff;
+  text-align: left;
+}
+
+.content button.slot span {
+  color: #5b8b39;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.content button.slot:not(:disabled):hover {
+  border-color: #b9cfa5;
+  background: #f2f6ee;
+}
+
+.content button.slot[aria-pressed='true'] {
+  border-color: #1c4338;
+  color: #fff;
+  background: #1c4338;
+}
+
+.content button.slot[aria-pressed='true'] span {
+  color: #c6ed78;
+}
+
+.content button.slot:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+.content button.slot-full {
+  color: #a3ada7;
+  background: #f3f5f1;
+}
+
+.content button.slot-full span {
+  color: #a3ada7;
+}
+
+.seat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(58px, 1fr));
+  gap: 8px;
+  max-width: 480px;
+  margin: 12px 0;
+}
+
+.content button.seat {
+  min-height: 44px;
+  margin: 0;
+  border: 1px solid #cfdcc7;
+  color: #29483b;
+  background: #fff;
+}
+
+.content button.seat[aria-pressed='true'] {
+  border-color: #1c4338;
+  color: #fff;
+  background: #1c4338;
+}
+
+.content button.seat:disabled {
+  border-color: #eadad7;
+  color: #c09a95;
+  background: #faf0ee;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+.content button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.content button.slot:disabled,
+.content button.seat:disabled {
+  opacity: 1;
+}
+
+.summary,
+.alternatives {
+  margin: 20px 0;
+  padding: 18px;
+  border: 1px solid #e3e9e1;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.summary h2 {
+  margin-top: 0;
+}
+
+.alternatives {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  background: #fffaf0;
+}
+
+.alternatives p {
+  margin: 0;
+}
+
+.hint {
+  color: #8a6416;
+  font-size: 13px;
+}
+
+.actions {
+  margin-top: 20px;
+}
+
+.content button.danger {
+  border-color: #e7c4bf;
+  color: #a23628;
+}
+
+.record-highlight {
+  border-color: #8dbb5f;
+  box-shadow: 0 0 0 3px #8dbb5f33;
+}
+
+.timestamp {
+  margin: 0;
+  font-size: 11px !important;
+}
+
+/* Status badges */
+.status {
+  display: inline-block;
+  align-self: flex-start;
+  margin-bottom: 8px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  color: #304b3e;
+  background: #eef3ea;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.status-confirmed { color: #355f1f; background: #e6f3df; }
+.status-checked_in { color: #fff; background: #3f8f3a; }
+.status-pending_group { color: #8a5a00; background: #fcf0d7; }
+.status-cancelled,
+.status-expired { color: #9b2c22; background: #fbe9e6; }
+.status-completed { color: #63736a; background: #eef1ed; }
+
+/* QR invite */
+.qr-invite {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin: 24px 0;
+  padding: 22px;
+  border: 1px solid #f0dcae;
+  border-radius: 14px;
+  background: #fffaf0;
+}
+
+.qr-invite > div:last-child {
+  flex: 1 1 260px;
+}
+
+.qr-invite h2 {
+  margin-top: 0;
+}
+
+.qr-code {
+  padding: 8px;
+  border-radius: 10px;
+  background: #fff;
+  line-height: 0;
+}
+
+.qr-expiry {
+  color: #8a5a00 !important;
+  font-size: 13px;
+}
+
+.content input.qr-url {
+  margin-bottom: 4px;
+  font-size: 12px;
+}
+
+.onboarding {
+  max-width: 560px;
+}
+
+.onboarding .text-link {
+  margin-left: 12px;
+}
+
+@media (max-width: 700px) {
+  .content dl {
+    grid-template-columns: 110px 1fr;
+  }
+
+  .qr-invite {
+    justify-content: center;
+  }
+}

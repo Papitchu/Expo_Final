@@ -1,0 +1,5 @@
+node_modules
+.env
+# Runtime data written by the server
+data/users.json
+data/bookings.json

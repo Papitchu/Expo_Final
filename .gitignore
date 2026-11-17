@@ -1,5 +1,15 @@
-node_modules
-dist
+node_modules/
 .env
+.env.*
+!.env.example
+.vercel/
+# Build output: `npm run build` writes the React app to the ROOT public/ only
+# (client/public/ holds source assets and must stay tracked)
+/public/
+dist/
+# Local PGlite database (npm run db:local)
+.pglite/
+# Browser-test artifacts
+.playwright-mcp/
 .DS_Store
 *.log

@@ -1,39 +1,41 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { setUnauthorizedHandler, tokenStore } from '../services/api.js'
-import { fetchMe, login as loginRequest } from '../services/auth.js'
+import { setUnauthorizedHandler } from '../services/api.js'
+import { fetchMe, login as loginRequest, logout as logoutRequest } from '../services/auth.js'
 import { AuthContext } from './auth.js'
 
 export default function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
-  const [status, setStatus] = useState(() => (tokenStore.get() ? 'loading' : 'anonymous'))
+  const [status, setStatus] = useState('loading')
 
-  const logout = useCallback(() => {
-    tokenStore.clear()
+  const clearSession = useCallback(() => {
     setUser(null)
     setStatus('anonymous')
   }, [])
 
   useEffect(() => {
-    setUnauthorizedHandler(logout)
-  }, [logout])
+    setUnauthorizedHandler(clearSession)
+  }, [clearSession])
 
-  // Returning visitor: validate the stored token once on boot.
+  // Returning visitor: the session cookie (7 days) is checked once on boot.
   useEffect(() => {
-    if (!tokenStore.get()) return
     fetchMe()
       .then((me) => {
         setUser(me)
         setStatus('authenticated')
       })
-      .catch(logout)
-  }, [logout])
+      .catch(clearSession)
+  }, [clearSession])
 
   const login = useCallback(async (email, password) => {
-    const { token, user: me } = await loginRequest(email, password)
-    tokenStore.set(token)
+    const me = await loginRequest(email, password)
     setUser(me)
     setStatus('authenticated')
   }, [])
+
+  const logout = useCallback(async () => {
+    await logoutRequest().catch(() => {})
+    clearSession()
+  }, [clearSession])
 
   const value = useMemo(() => ({ user, status, login, logout }), [user, status, login, logout])
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

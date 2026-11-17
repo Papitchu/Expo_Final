@@ -13,6 +13,7 @@ npm run setup                 # ติดตั้งแพ็กเกจทั
 cp .env.example .env          # กรอก DATABASE_URL และ SESSION_SECRET
 npm run db:setup              # สร้างตาราง + พื้นที่/ที่นั่งตัวอย่าง (รันซ้ำได้)
 npm run dev                   # API :3000 + หน้าเว็บ http://localhost:5173
+npm test                      # ทดสอบกฎการจอง (ไม่ต้องใช้ฐานข้อมูล)
 ```
 
 ไม่มี PostgreSQL บนเครื่อง? เปิด `npm run db:local` ค้างไว้อีกหน้าต่าง (ฐานข้อมูล PGlite ในโฟลเดอร์ `.pglite/`)
@@ -53,6 +54,7 @@ src/                    เซิร์ฟเวอร์ Express (ไม่ถ�
   env.js                โหลด .env และตรวจค่าที่จำเป็น
   db.js session.js dates.js http.js
 scripts/                schema.sql, seed-data.js, setup-db.js, local-db.js
+tests/                  rules.test.js (npm test)
 public/                 ผลลัพธ์จาก npm run build (ไม่ commit)
 vercel.json             ให้ทุกเส้นทางที่ไม่ใช่ /api เปิดแอป React
 ```

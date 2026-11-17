@@ -6,13 +6,14 @@
 client/            React app (Vite). `npm run build` writes it to the root public/.
 public/            build output only — what the browser may download. Not committed.
 src/               Express server. Never public.
-  index.js         entry point (Vercel looks for this file and uses its exported app)
+  index.js         Express app + local server (`npm start`)
   routes/          auth.js, spaces.js, bookings.js
   services/        rules.js (booking rules), data.js (SQL + status sweep)
   env.js           loads .env (if present) and checks required settings
   db.js session.js dates.js http.js
 scripts/           schema.sql, seed-data.js, setup-db.js, local-db.js (run by you, not served)
-vercel.json        SPA rewrite: every non-/api path serves index.html
+api/index.js       Vercel function entry: loads the Express app for /api/*
+vercel.json        /api/* → api/index.js, every other path → index.html
 ```
 
 ## 1. Get a Postgres database
@@ -55,8 +56,8 @@ npm run db:setup -- --reset
 2. Project Settings → Environment Variables: add `DATABASE_URL` and `SESSION_SECRET`
    (optional: `INVITE_TTL_MINUTES`, default 15).
 3. Run `npm run db:setup` once from your computer with `.env` pointing at the hosted database.
-4. Push. Vercel runs `vercel-build` (builds the client into `public/`) and serves `src/index.js`
-   as the function for `/api/*`. Test on a Preview deployment first.
+4. Push. Vercel runs `vercel-build` (builds the client into `public/`) and serves `api/index.js`
+   (which loads the Express app) as the function for `/api/*`. Test on a Preview deployment first.
 
 ## 4. Checks after the first deploy
 

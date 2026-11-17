@@ -48,7 +48,7 @@ client/                 หน้าเว็บ React (Vite) — build ออ�
   src/hooks/ utils/     usePolling, useGeolocation, density, distance, format
   src/styles/           CSS แยกตามส่วน
 src/                    เซิร์ฟเวอร์ Express (ไม่ถูกเสิร์ฟให้เบราว์เซอร์)
-  index.js              จุดเริ่ม (Vercel ใช้ไฟล์นี้)
+  index.js              แอป Express + เซิร์ฟเวอร์ในเครื่อง (npm start)
   routes/               auth.js, spaces.js, bookings.js
   services/             rules.js (กฎการจอง), data.js (คำสั่ง SQL)
   env.js                โหลด .env และตรวจค่าที่จำเป็น
@@ -56,7 +56,8 @@ src/                    เซิร์ฟเวอร์ Express (ไม่ถ�
 scripts/                schema.sql, seed-data.js, setup-db.js, local-db.js
 tests/                  rules.test.js (npm test)
 public/                 ผลลัพธ์จาก npm run build (ไม่ commit)
-vercel.json             ให้ทุกเส้นทางที่ไม่ใช่ /api เปิดแอป React
+api/index.js            จุดเริ่มบน Vercel: ส่ง /api/* ไปที่แอป Express
+vercel.json             ส่ง /api/* ไปที่ api/index.js และเส้นทางอื่นเปิดแอป React
 ```
 
 ## API

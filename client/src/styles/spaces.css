@@ -234,3 +234,56 @@
   background: var(--density-color);
   transition: width 0.4s;
 }
+
+/* Home: one block per building, with its places inside */
+.building-list {
+  display: grid;
+  gap: 18px;
+  margin-top: 22px;
+}
+
+.building-block {
+  padding: 18px;
+  border: 1px solid #dbe7cf;
+  border-radius: 14px;
+  background: #f7faf3;
+}
+
+.building-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e3ecd9;
+}
+
+.content .building-header h2 {
+  margin: 0;
+  color: #1c4338;
+  font-size: 18px;
+}
+
+.building-header p {
+  margin: 2px 0 0;
+  color: #718078;
+  font-size: 13px;
+}
+
+.building-density {
+  flex: 0 1 240px;
+  min-width: 180px;
+}
+
+.building-density .density {
+  margin: 0;
+}
+
+.records.building-spaces {
+  margin-top: 14px;
+}
+
+.building-spaces .record {
+  background: #fff;
+}

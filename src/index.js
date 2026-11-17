@@ -1,3 +1,4 @@
+import { requireEnv } from './env.js'; // first: loads .env before anything reads settings
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -10,9 +11,7 @@ import { bookingsRouter } from './routes/bookings.js';
 import { spacesRouter } from './routes/spaces.js';
 import { sweepStatuses } from './services/data.js';
 
-if (!process.env.SESSION_SECRET) {
-  throw new Error('SESSION_SECRET is not set (see .env.example)');
-}
+const sessionSecret = requireEnv('SESSION_SECRET');
 
 const app = express();
 const isProd = process.env.NODE_ENV === 'production' || Boolean(process.env.VERCEL);
@@ -24,7 +23,7 @@ app.use(express.json({ limit: '10kb' }));
 // Signed, httpOnly cookie holding the user id. 7 days, so returning users skip the login page.
 app.use(cookieSession({
   name: 'session',
-  keys: [process.env.SESSION_SECRET],
+  keys: [sessionSecret],
   httpOnly: true,
   sameSite: 'lax',
   secure: isProd,

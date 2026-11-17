@@ -9,6 +9,7 @@ src/               Express server. Never public.
   index.js         entry point (Vercel looks for this file and uses its exported app)
   routes/          auth.js, spaces.js, bookings.js
   services/        rules.js (booking rules), data.js (SQL + status sweep)
+  env.js           loads .env (if present) and checks required settings
   db.js session.js dates.js http.js
 scripts/           schema.sql, seed-data.js, setup-db.js, local-db.js (run by you, not served)
 vercel.json        SPA rewrite: every non-/api path serves index.html
@@ -76,9 +77,9 @@ For a meeting room, open the QR link from two other accounts — it becomes conf
 
 | Message | Cause / fix |
 |---|---|
-| `DATABASE_URL is not set` / `SESSION_SECRET is not set` | `.env` missing or empty. It must be named `.env` (not `.env.txt`) in the project root. |
-| `ECONNREFUSED ... 5432` / `5433` | Database not running. Start your Postgres, or `npm run db:local`. |
+| `DATABASE_URL is not set` / `SESSION_SECRET is not set` | No `.env`, or it is empty. Run `cp .env.example .env` and fill it in. It must be named `.env` (not `.env.txt`) in the project root. |
+| `Cannot reach the database` / `ECONNREFUSED ... 5432` / `5433` | Database not running. Start your Postgres, or `npm run db:local` in another terminal. |
 | `Invalid URL` | Malformed `DATABASE_URL` — URL-encode special characters in the password. |
 | Hangs or errors with PGlite | Set `PG_POOL_MAX=1` (PGlite serves one connection). |
 | Logged out after a deploy | `SESSION_SECRET` changed; that signs everyone out. |
-| `--env-file` unknown | Node.js older than 20.6 — update Node. |
+| `process.loadEnvFile is not a function` | Node.js older than 20.12 — update Node. |

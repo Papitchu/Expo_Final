@@ -1,13 +1,10 @@
 import pg from 'pg';
-
-if (!process.env.DATABASE_URL) {
-  throw new Error('DATABASE_URL is not set (see .env.example)');
-}
+import { requireEnv } from './env.js';
 
 // Keep the pool small: on Vercel every function instance opens its own connections.
 // The local PGlite database (npm run db:local) needs PG_POOL_MAX=1.
 export const pool = new pg.Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: requireEnv('DATABASE_URL'),
   max: Number(process.env.PG_POOL_MAX || 3),
 });
 

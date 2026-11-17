@@ -17,17 +17,15 @@ export const STATUS_LABELS = {
 
 export const UPCOMING_STATUSES = ['pending_group', 'confirmed', 'checked_in']
 
+/** Today's date (YYYY-MM-DD) in Thailand, matching the server, whatever the device's timezone. */
 export function toDateString(date = new Date()) {
-  const y = date.getFullYear()
-  const m = String(date.getMonth() + 1).padStart(2, '0')
-  const d = String(date.getDate()).padStart(2, '0')
-  return `${y}-${m}-${d}`
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Bangkok' }).format(date)
 }
 
 export function addDays(dateString, days) {
-  const date = new Date(`${dateString}T00:00:00`)
-  date.setDate(date.getDate() + days)
-  return toDateString(date)
+  const date = new Date(`${dateString}T00:00:00Z`)
+  date.setUTCDate(date.getUTCDate() + days)
+  return date.toISOString().slice(0, 10)
 }
 
 export function slotLabel(slot) {

@@ -1,6 +1,7 @@
 // Creates the tables and loads the sample spaces/seats. Safe to run more than once.
 //   npm run db:setup              create/update
 //   npm run db:setup -- --reset   DROP all tables first (deletes users and bookings!)
+import '../src/env.js'; // loads .env
 import fs from 'node:fs';
 import { pool } from '../src/db.js';
 import { spaces } from './seed-data.js';
@@ -50,6 +51,13 @@ try {
     }
     console.log(`Database ready: ${spaces.length} spaces.`);
   }
+} catch (error) {
+  if (error.code !== 'ECONNREFUSED') throw error;
+  console.error(
+    'Cannot reach the database in DATABASE_URL (connection refused).\n' +
+    'Start it first: for the local PGlite database run `npm run db:local` in another terminal.',
+  );
+  process.exitCode = 1;
 } finally {
   await pool.end();
 }

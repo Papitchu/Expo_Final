@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
+import BuildingBlock from '../components/BuildingBlock.jsx'
 import CategoryFilter from '../components/CategoryFilter.jsx'
 import NearestAlert from '../components/NearestAlert.jsx'
-import SpaceCard from '../components/SpaceCard.jsx'
 import { useAuth } from '../context/auth.js'
 import { useGeolocation } from '../hooks/useGeolocation.js'
 import { usePolling } from '../hooks/usePolling.js'
@@ -40,12 +40,28 @@ export default function HomePage() {
     return rows.sort((a, b) => (origin ? a.distance - b.distance : a.density - b.density))
   }, [spaces, origin, category, query])
 
+  // Group the filtered places into one block per building, keeping the sort order:
+  // the building with the nearest (or emptiest) place comes first.
+  const buildingBlocks = useMemo(() => {
+    const groups = new Map()
+    for (const space of visible) {
+      const group = groups.get(space.building) ?? {
+        name: space.building, spaces: [], activeCount: 0, capacity: 0, distance: null,
+      }
+      group.spaces.push(space)
+      group.activeCount += space.activeCount
+      group.capacity += space.capacity
+      if (space.distance != null) group.distance = Math.min(group.distance ?? Infinity, space.distance)
+      groups.set(space.building, group)
+    }
+    return [...groups.values()]
+  }, [visible])
+
   const nearest = origin ? visible.find((s) => s.density < 1) : null
 
   return (
     <section>
-      <h1>สวัสดี {user?.name} </h1>
-      
+      <h1>สวัสดี {user?.name}</h1>
 
       <NearestAlert
         geo={geo}
@@ -70,8 +86,8 @@ export default function HomePage() {
       {error && <p className="error-message" role="alert">{error.message}</p>}
       {loading && !spaces && <p>กำลังโหลดพื้นที่…</p>}
 
-      <div className="records">
-        {visible.map((space) => <SpaceCard key={space.id} space={space} />)}
+      <div className="building-list">
+        {buildingBlocks.map((building) => <BuildingBlock key={building.name} building={building} />)}
       </div>
       {spaces && !visible.length && <p>ไม่พบพื้นที่ตามเงื่อนไข</p>}
     </section>

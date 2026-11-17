@@ -6,7 +6,7 @@
 
 ## เริ่มใช้งานแบบเร็ว
 
-ต้องมี Node.js 20.6 ขึ้นไป
+ต้องมี Node.js 20.12 ขึ้นไป
 
 ```sh
 npm run setup                 # ติดตั้งแพ็กเกจทั้งฝั่งเซิร์ฟเวอร์และ client
@@ -23,6 +23,7 @@ npm run dev                   # API :3000 + หน้าเว็บ http://loca
 ## ฟีเจอร์หลัก
 
 - **ล็อกอินค้างไว้ 7 วัน** ด้วย session cookie (httpOnly) กลับมาเปิดเว็บจะเข้าหน้า Home ทันที
+- **หน้าแรกแยกเป็นบล็อกตามอาคาร**: แต่ละอาคารแสดงความหนาแน่นรวม ระยะทาง และพื้นที่ทั้งหมดในอาคารนั้น
 - **ความหนาแน่นแบบสด**: จำนวนผู้ใช้ในช่วงเวลาปัจจุบัน ÷ ความจุ แสดงสี เขียว (<50%) / เหลือง (50–80%) / แดง (≥80%) อัปเดตทุก 20 วินาที
 - **พื้นที่ใกล้ที่สุด** จากตำแหน่ง GPS (`navigator.geolocation`) ถ้าไม่อนุญาตให้เลือกอาคารเอง
 - **กรองตามประเภท**: ห้องสมุด / Co-working / ห้องประชุม และค้นหาด้วยชื่อ
@@ -40,7 +41,7 @@ npm run dev                   # API :3000 + หน้าเว็บ http://loca
 ```text
 client/                 หน้าเว็บ React (Vite) — build ออกไปที่ public/ ของโฟลเดอร์หลัก
   src/pages/            หน้าต่าง ๆ: Login, Onboarding, Home, SpaceDetail, Booking, MyBookings, BookingDetail, JoinGroup
-  src/components/       SpaceCard, DensityBadge, CategoryFilter, NearestAlert, SlotPicker, QRInvite, ...
+  src/components/       BuildingBlock, SpaceCard, DensityBadge, CategoryFilter, NearestAlert, SlotPicker, QRInvite, ...
   src/context/          AuthContext (สถานะล็อกอิน)
   src/services/         เรียก API (auth, spaces, bookings)
   src/hooks/ utils/     usePolling, useGeolocation, density, distance, format
@@ -49,6 +50,7 @@ src/                    เซิร์ฟเวอร์ Express (ไม่ถ�
   index.js              จุดเริ่ม (Vercel ใช้ไฟล์นี้)
   routes/               auth.js, spaces.js, bookings.js
   services/             rules.js (กฎการจอง), data.js (คำสั่ง SQL)
+  env.js                โหลด .env และตรวจค่าที่จำเป็น
   db.js session.js dates.js http.js
 scripts/                schema.sql, seed-data.js, setup-db.js, local-db.js
 public/                 ผลลัพธ์จาก npm run build (ไม่ commit)

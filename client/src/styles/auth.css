@@ -348,6 +348,13 @@
   line-height: 1.6;
 }
 
+.login-message.login-error {
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: #9b2c22;
+  background: #fbe9e6;
+}
+
 .onboarding-link {
   display: block;
   margin: 16px auto 0;
